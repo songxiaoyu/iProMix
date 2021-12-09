@@ -28,7 +28,7 @@
 #' result <- iProMix.PermAdd.LRT.matrix(yMatrix=y, x=x, pi=pi, B=1, CellType=1)
 #' }
 iProMix.PermAdd.LRT.matrix=function(yMatrix, x,  x_tilde=NULL, cov=NULL,
-                                    pi, CellType=1, B=1, seed=NULL, tuningPar=1e-6, cl=FALSE, verbose = FALSE) {
+                                    pi, CellType=1, B=1, seed=NULL, tuningPar=1e-6, cl=FALSE, verbose = TRUE) {
 
   yMatrix=as.matrix(yMatrix);# -- coef1 and coef2 are not on original scale
   x=as.matrix(x);

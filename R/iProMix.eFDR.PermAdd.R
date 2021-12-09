@@ -47,13 +47,16 @@ iProMix.eFDR.PermAdd=function(yMatrix, x, cov=NULL, pi, x_tilde=NULL,
     score=NULL
   }
   if (B>1) {
-    cut2=sapply(1:B, function(f) knockoff::knockoff.threshold(W=M[,f], fdr = FDR, offset = 1));
+    cut2=sapply(1:B, function(f) 
+      knockoff::knockoff.threshold(W=M[f,], fdr = FDR, offset = 1)
+      );
     M_identified <- lapply(1:B, function(f) which(M[f,]>cut2[f]))
     vote=table(unlist(M_identified))
     M_vote=names(vote)[(vote>B/2)]
     zero_idx=setdiff(1:ncol(M), names(vote))
     if (length(zero_idx)>0)  {zeros=matrix(0, nrow=length(zero_idx)); rownames(zeros)=zero_idx
     score=rbind(zeros, as.matrix(vote))} else {score=as.matrix(vote)}
+    score=score[order(as.numeric(rownames(score))),]
   }
 
   summary=list(NoSigGene=length(M_vote), IdxSigGene=M_vote, 

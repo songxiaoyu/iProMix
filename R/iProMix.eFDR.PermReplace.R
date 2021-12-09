@@ -28,7 +28,7 @@
 #' result <- iProMix.eFDR.PermReplace(yMatrix=y, x=x, pi=pi,reduce1=c(2,1), B=1, seed=1132, FDR=0.1)
 #' }
 iProMix.eFDR.PermReplace=function(yMatrix, x, cov=NULL, pi, x_tilde=NULL,
-                                  reduce1=c(2,1), reduce2=NULL, cl=FALSE, 
+                                  reduce1=c(2,1), reduce2=NULL, cl=FALSE,
                                   B=1, seed=NULL, FDR=0.1, verbose = FALSE) {
   if (is.null(seed)==FALSE) {set.seed(seed)}
   if (is.null(x_tilde)) {  x_tilde=lapply(1:B, function(f) sample(x))}
@@ -56,9 +56,9 @@ iProMix.eFDR.PermReplace=function(yMatrix, x, cov=NULL, pi, x_tilde=NULL,
   LRT_d <- sapply(1:ncol(yMatrix), function(f) ft1[[f]]$LRT)
   LRT_p <- sapply(1:B, function(f2) sapply(1:ncol(yMatrix), function(f1) result_ft2[[f2]][[f1]]$LRT))
   cut=seq(1, max(LRT_d), by =0.1)
-  idx=which(sapply(cut, function(f) (mean(LRT_p>f)+1)/mean(LRT_d>f))<FDR)[1]
+  idx=which(sapply(cut, function(f) ((sum(LRT_p>f)+1)/B)/sum(LRT_d>f))<FDR)[1]
   NoSigGene=ifelse(is.na(idx), 0, sum(LRT_d>cut[idx]))
-  
+
   # gene-specific eFDR
   gene_eFDR=sapply(1:ncol(yMatrix), function(f) mean(LRT_p>LRT_d[f])/(mean(LRT_d>LRT_d[f])+1e-12) )
   summary=list(NoSigGene=NoSigGene, IdxSigGene=  which(LRT_d>cut[idx]), gene_eFDR=gene_eFDR,

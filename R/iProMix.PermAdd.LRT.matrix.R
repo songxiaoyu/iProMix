@@ -27,7 +27,7 @@
 #' pi <- runif(100)
 #' result <- iProMix.PermAdd.LRT.matrix(yMatrix=y, x=x, pi=pi, B=1, CellType=1)
 #' }
-iProMix.PermAdd.LRT.matrix=function(yMatrix, x,  x_tilde=NULL, cov=NULL, 
+iProMix.PermAdd.LRT.matrix=function(yMatrix, x,  x_tilde=NULL, cov=NULL,
                                     pi, CellType=1, B=1, seed=NULL, tuningPar=1e-6, cl=FALSE, verbose = FALSE) {
 
   yMatrix=as.matrix(yMatrix);# -- coef1 and coef2 are not on original scale
@@ -43,8 +43,16 @@ iProMix.PermAdd.LRT.matrix=function(yMatrix, x,  x_tilde=NULL, cov=NULL,
       if (verbose == TRUE){
       print(p)
       }
-      ft= iProMix.PermAdd.LRT(y=yMatrix[,p], x=x, x_tilde=x_tilde, cov=cov, pi=pi, CellType=CellType, seed=seed, B=B,tuningPar=tuningPar )
-      ft.all=append(ft.all, list(ft))
+      # ft= iProMix.PermAdd.LRT(y=yMatrix[,p], x=x, x_tilde=x_tilde, cov=cov, pi=pi, CellType=CellType, seed=seed, B=B,tuningPar=tuningPar )
+      ft <- try(iProMix.PermAdd.LRT(y=yMatrix[,p], x=x, x_tilde=x_tilde, cov=cov, pi=pi, CellType=CellType, seed=seed, B=B,tuningPar=tuningPar ))
+      if(inherits(ft, "try-error"))
+      {
+        save(yMatrix,p, x, x_tilde, cov, pi, CellType, seed, B, tuningPar, file = "iProMix_debug.Rdata")
+        ft <- NA
+      } else{
+        ft.all=append(ft.all, list(ft))
+      }
+      # ft.all=append(ft.all, list(ft))
     }
     return(ft.all=ft.all)
   } else {

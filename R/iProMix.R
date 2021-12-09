@@ -34,7 +34,7 @@
 #' pi <- runif(100)
 #' iProMix_result <- iProMix(y = y, x = x, pi = pi, reduce1=c(2,1), reduce2=NULL)
 iProMix= function(y, x, cov=NULL, pi,
-                  tuningPar=1e-8, diffNum=0.0001,numitersNum=200,
+                  tuningPar=1e-8, diffNum=0.001,numitersNum=200,
                   reduce1=NULL, reduce2=NULL, inital.mu1=NULL, inital.mu2=NULL, inital.var1=NULL, inital.var2=NULL) {
   # reduce=c(2,1) # index of the row and column to reduce to zero
   # diffNum=0.001;numitersNum=200; inital.mu1=NULL; inital.mu2=NULL; inital.var1=NULL; inital.var2=NULL
@@ -71,7 +71,7 @@ iProMix= function(y, x, cov=NULL, pi,
     # calculate LL
     ll= c(ll, LL(u=u, pi=pi, mu1=mu1, mu2=mu2, var1=var1, var2=var2))
 
-    diff<-abs(ll[numiters]-ll[numiters-1])
+    diff<-ll[numiters]-ll[numiters-1]
     #ll
   }
 
@@ -81,5 +81,6 @@ iProMix= function(y, x, cov=NULL, pi,
   r1;r2
 
   return(list(var1=var1, mu1=mu1,var2=var2, mu2=mu2,
-              cor.score1=r1, cor.score2=r2, ll=ll[numiters], coef1=m_output$coef1, coef2=m_output$coef2))
+              cor.score1=r1, cor.score2=r2, ll=ll[numiters], 
+              coef1=m_output$coef1, coef2=m_output$coef2))
 }

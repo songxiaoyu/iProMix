@@ -8,6 +8,7 @@
 #' @param reduce2 A index of the row and column of the variance-covariance matrix that should be forced to be zero in cell type 2.  Default is NULL.
 #' @param tuningPar Default is 1e-8. It is used in the embedded graphic lasso procedure for estimating correlation. A larger tuningPar can be selected if one is interested in penalized estimates.
 #' @param cl True of False. If true, parallel computing is used; need the library(doRNG). Default is FALSE
+#' @param verbose logic variable. If TRUE then will print additional information in iProMix
 #'
 #' @return list with number of elements equal to the number of genes for the yMatrix. Each gene contains a sublist with 10 elements. It contains
 #' \item{var1:}{The estimated (y,x) variance of cell type 1}
@@ -32,7 +33,7 @@
 #' pi <- runif(10)
 #' iProMix_result <- iProMix.LRT.matrix(yMatrix = y, x = x, pi = pi, reduce1=c(2,1), reduce2=NULL)
 #' }
-iProMix.LRT.matrix=function(yMatrix, x, cov=NULL, pi, reduce1=c(2,1), reduce2=NULL, tuningPar=1e-6, cl=F) {
+iProMix.LRT.matrix=function(yMatrix, x, cov=NULL, pi, reduce1=c(2,1), reduce2=NULL, tuningPar=1e-6, cl=FALSE, verbose = FALSE) {
 
   yMatrix=as.matrix(yMatrix);
   x=as.matrix(x);
@@ -42,9 +43,11 @@ iProMix.LRT.matrix=function(yMatrix, x, cov=NULL, pi, reduce1=c(2,1), reduce2=NU
   n=nrow(yMatrix)
 
   ft.all=list()
-  if (cl==F) { # parallel computing
+  if (cl==FALSE) { # parallel computing
     for (p in 1:g) {
+      if (verbose == TRUE){
       print(p)
+      }
       ft= iProMix.LRT(y=yMatrix[,p], x=x, cov=cov, pi=pi, reduce1=reduce1, reduce2=reduce2, tuningPar=tuningPar)
       ft.all=append(ft.all, list(ft))
     }

@@ -11,7 +11,7 @@ iProMix.eFDR.PermReplace(
   pi,
   reduce1 = c(2, 1),
   reduce2 = NULL,
-  cl = F,
+  cl = FALSE,
   B = 1,
   seed = NULL,
   FDR = 0.1

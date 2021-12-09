@@ -14,7 +14,7 @@ iProMix.PermAdd.LRT.matrix(
   B = 1,
   seed = NULL,
   tuningPar = 1e-06,
-  cl = F
+  cl = FALSE
 )
 }
 \arguments{

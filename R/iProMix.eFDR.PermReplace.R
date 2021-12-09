@@ -10,6 +10,7 @@
 #' @param B The number of permutation
 #' @param seed Seed for the permutation
 #' @param FDR FDR cutoff; Default 0.1
+#' @param verbose logic variable. If TRUE then will print additional information in permutation of iProMix
 #'
 #' @return list with 4 elements. It contains
 #' \item{NoSigGene:}{Number of significant genes at the pre-determined FDR cutoff}
@@ -26,30 +27,41 @@
 #' pi <- runif(10)
 #' result <- iProMix.eFDR.PermReplace(yMatrix=y, x=x, pi=pi,reduce1=c(2,1), B=1, seed=1132, FDR=0.1)
 #' }
-iProMix.eFDR.PermReplace=function(yMatrix, x, cov=NULL, pi,
-                                  reduce1=c(2,1), reduce2=NULL, cl=F, B=1, seed=NULL, FDR=0.1) {
-  if (is.null(seed)==F) {set.seed(seed)}
-  x_tilde=lapply(1:B, function(f) sample(x))
+iProMix.eFDR.PermReplace=function(yMatrix, x, cov=NULL, pi, x_tilde=NULL,
+                                  reduce1=c(2,1), reduce2=NULL, cl=FALSE, 
+                                  B=1, seed=NULL, FDR=0.1, verbose = FALSE) {
+  if (is.null(seed)==FALSE) {set.seed(seed)}
+  if (is.null(x_tilde)) {  x_tilde=lapply(1:B, function(f) sample(x))}
+
+  #print(x_tilde[[1]][1:3])
   # calculate likelihood of the original data
   ft1=iProMix.LRT.matrix(yMatrix=yMatrix, x=x, cov=cov, pi=pi,
                          reduce1=reduce1, reduce2=reduce2, cl=cl)
+  if (verbose == TRUE){
   print("Finished likelihood")
-
-  # calculate likelihood of the permutated data
+  }
+  # calculate likelihood of the permuted data
   result_ft2 <- vector("list", B)
   for (b in 1:B){
+    print(b)
     ft2=iProMix.LRT.matrix(yMatrix=yMatrix, x=x_tilde[[b]], cov=cov, pi=pi,
                            reduce1=reduce1, reduce2=reduce2, cl=cl)
     result_ft2[[b]] <- ft2
+    if (verbose == TRUE){
     print(paste0("Finished likelihood permutation ", b))
+    }
   }
 
   #  eFDR
   LRT_d <- sapply(1:ncol(yMatrix), function(f) ft1[[f]]$LRT)
   LRT_p <- sapply(1:B, function(f2) sapply(1:ncol(yMatrix), function(f1) result_ft2[[f2]][[f1]]$LRT))
   cut=seq(1, max(LRT_d), by =0.1)
-  idx=which(sapply(cut, function(f) mean(LRT_p>f)/mean(LRT_d>f))<FDR)[1]
+  idx=which(sapply(cut, function(f) (mean(LRT_p>f)+1)/mean(LRT_d>f))<FDR)[1]
   NoSigGene=ifelse(is.na(idx), 0, sum(LRT_d>cut[idx]))
-  summary=list(NoSigGene=NoSigGene, IdxSigGene=  which(LRT_d>cut[idx]),  ft_data = ft1, ft_permutated = result_ft2)
+  
+  # gene-specific eFDR
+  gene_eFDR=sapply(1:ncol(yMatrix), function(f) mean(LRT_p>LRT_d[f])/(mean(LRT_d>LRT_d[f])+1e-12) )
+  summary=list(NoSigGene=NoSigGene, IdxSigGene=  which(LRT_d>cut[idx]), gene_eFDR=gene_eFDR,
+               ft_data = ft1, ft_permuted = result_ft2)
   return(summary)
 }

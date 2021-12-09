@@ -12,7 +12,7 @@ iProMix.LRT.matrix(
   reduce1 = c(2, 1),
   reduce2 = NULL,
   tuningPar = 1e-06,
-  cl = F
+  cl = FALSE
 )
 }
 \arguments{

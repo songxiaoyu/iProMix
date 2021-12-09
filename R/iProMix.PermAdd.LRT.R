@@ -31,11 +31,15 @@ iProMix.PermAdd.LRT=function(y, x, x_tilde=NULL, cov=NULL, pi,  B=1, CellType=1,
 
     # full model
     ft.full=iProMix(y=y, x=xx, cov=cov, pi=pi,  reduce1=NULL, reduce2=NULL,
-                    inital.mu1=ft.zero$mu1, inital.mu2=ft.zero$mu2, inital.var1=ft.zero$var1, inital.var2=ft.zero$var2)
+                    inital.mu1=ft.zero$mu1, inital.mu2=ft.zero$mu2, 
+                    inital.var1=ft.zero$var1, inital.var2=ft.zero$var2,
+                    tuningPar=tuningPar, diffNum=diffNum,numitersNum=numitersNum)
     if (CellType==1) {
       # reduce x,y
       ft.dat=iProMix(y=y, x=xx,cov=cov,  pi=pi, reduce1=c(2,1), reduce2=NULL,
-                     inital.mu1=ft.zero$mu1, inital.mu2=ft.zero$mu2, inital.var1=ft.zero$var1, inital.var2=ft.zero$var2)
+                     inital.mu1=ft.zero$mu1, inital.mu2=ft.zero$mu2, 
+                     inital.var1=ft.zero$var1, inital.var2=ft.zero$var2,
+                     tuningPar=tuningPar, diffNum=diffNum,numitersNum=numitersNum)
       # reduce x_tilde, y
       ft.noise=iProMix(y=y, x=xx,cov=cov,  pi=pi, reduce1=c(3,1), reduce2=NULL,
                        inital.mu1=ft.zero$mu1, inital.mu2=ft.zero$mu2, inital.var1=ft.zero$var1, inital.var2=ft.zero$var2)
@@ -43,10 +47,14 @@ iProMix.PermAdd.LRT=function(y, x, x_tilde=NULL, cov=NULL, pi,  B=1, CellType=1,
     if (CellType==2) {
       # reduce x,y
       ft.dat=iProMix(y=y, x=xx,cov=cov,  pi=pi, reduce1=NULL, reduce2=c(2,1),
-                     inital.mu1=ft.zero$mu1, inital.mu2=ft.zero$mu2, inital.var1=ft.zero$var1, inital.var2=ft.zero$var2)
+                     inital.mu1=ft.zero$mu1, inital.mu2=ft.zero$mu2, 
+                     inital.var1=ft.zero$var1, inital.var2=ft.zero$var2,
+                     tuningPar=tuningPar, diffNum=diffNum,numitersNum=numitersNum)
       # reduce x_tilde, y
       ft.noise=iProMix(y=y, x=xx,cov=cov,  pi=pi, reduce1=NULL, reduce2=c(3,1),
-                       inital.mu1=ft.zero$mu1, inital.mu2=ft.zero$mu2, inital.var1=ft.zero$var1, inital.var2=ft.zero$var2)
+                       inital.mu1=ft.zero$mu1, inital.mu2=ft.zero$mu2, 
+                       inital.var1=ft.zero$var1, inital.var2=ft.zero$var2,
+                       tuningPar=tuningPar, diffNum=diffNum,numitersNum=numitersNum)
 
     }
 

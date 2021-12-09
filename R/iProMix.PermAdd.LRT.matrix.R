@@ -10,6 +10,7 @@
 #' @param seed Seed for the permutation
 #' @param tuningPar Default is 1e-8. It is used in the embedded graphic lasso procedure for estimating correlation. A larger tuningPar can be selected if one is interested in penalized estimates.
 #' @param cl True of False. If true, parallel computing is used; need the library(doRNG). Default is FALSE
+#' @param verbose logic variable. If TRUE then will print additional information in iProMix
 #'
 #' @return list with number of elements equal to the number of genes for the yMatrix. Each gene contains a sublist with 2 elements. It contains
 #' \item{ll:}{The estimated log likelihood function}
@@ -26,7 +27,8 @@
 #' pi <- runif(100)
 #' result <- iProMix.PermAdd.LRT.matrix(yMatrix=y, x=x, pi=pi, B=1, CellType=1)
 #' }
-iProMix.PermAdd.LRT.matrix=function(yMatrix, x,  x_tilde=NULL, cov=NULL, pi, CellType=1, B=1, seed=NULL, tuningPar=1e-6, cl=F) {
+iProMix.PermAdd.LRT.matrix=function(yMatrix, x,  x_tilde=NULL, cov=NULL, 
+                                    pi, CellType=1, B=1, seed=NULL, tuningPar=1e-6, cl=FALSE, verbose = FALSE) {
 
   yMatrix=as.matrix(yMatrix);# -- coef1 and coef2 are not on original scale
   x=as.matrix(x);
@@ -36,9 +38,11 @@ iProMix.PermAdd.LRT.matrix=function(yMatrix, x,  x_tilde=NULL, cov=NULL, pi, Cel
   n=nrow(yMatrix)
 
   ft.all=list()
-  if (cl==F) {
+  if (cl==FALSE) {
     for (p in 1:g) {
+      if (verbose == TRUE){
       print(p)
+      }
       ft= iProMix.PermAdd.LRT(y=yMatrix[,p], x=x, x_tilde=x_tilde, cov=cov, pi=pi, CellType=CellType, seed=seed, B=B,tuningPar=tuningPar )
       ft.all=append(ft.all, list(ft))
     }

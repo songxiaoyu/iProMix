@@ -56,10 +56,10 @@ iProMix.eFDR.PermAdd=function(yMatrix, x, cov=NULL, pi, x_tilde=NULL,
     zero_idx=setdiff(1:ncol(M), names(vote))
     if (length(zero_idx)>0)  {zeros=matrix(0, nrow=length(zero_idx)); rownames(zeros)=zero_idx
     score=rbind(zeros, as.matrix(vote))} else {score=as.matrix(vote)}
-    score=score[order(as.numeric(rownames(score))),]
+    score2=score[order(as.numeric(rownames(score))),]/B
   }
 
   summary=list(NoSigGene=length(M_vote), IdxSigGene=M_vote, 
-               IdxSigGeneEach=M_identified, ImportanceScore=score, ft_add = ft3)
+               IdxSigGeneEach=M_identified, ImportanceScore=score2, ft_add = ft3)
   return(summary)
 }

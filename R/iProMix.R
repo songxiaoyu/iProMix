@@ -35,7 +35,9 @@
 #' iProMix_result <- iProMix(y = y, x = x, pi = pi, reduce1=c(2,1), reduce2=NULL)
 iProMix= function(y, x, cov=NULL, pi,
                   tuningPar=1e-8, diffNum=0.001,numitersNum=200,
-                  reduce1=NULL, reduce2=NULL, inital.mu1=NULL, inital.mu2=NULL, inital.var1=NULL, inital.var2=NULL) {
+                  reduce1=NULL, reduce2=NULL,
+                  inital.mu1=NULL, inital.mu2=NULL,
+                  inital.var1=NULL, inital.var2=NULL) {
   # reduce=c(2,1) # index of the row and column to reduce to zero
   # diffNum=0.001;numitersNum=200; inital.mu1=NULL; inital.mu2=NULL; inital.var1=NULL; inital.var2=NULL
   y=as.matrix(y);  x=as.matrix(x);  pi=as.matrix(pi)
@@ -61,7 +63,7 @@ iProMix= function(y, x, cov=NULL, pi,
     # Estep - give parameters; calcualte x1, x2, y1, y2
     e_output=EStep(u=u, pi=pi, mu1=mu1, var1=var1, mu2=mu2, var2=var2)
     Eu1=e_output$Eu1;Eu2=e_output$Eu2
-    
+
     # Mstep: Given X1, Y1, X2, Y2, get mu_1, mu_2, sigma_1, sigma_2, rho
     m_output=MStep(Eu1=Eu1, Eu2=Eu2,
                    Evar1=e_output$Evar1, Evar2=e_output$Evar2,
@@ -75,13 +77,20 @@ iProMix= function(y, x, cov=NULL, pi,
     diff<-ll[numiters]-ll[numiters-1]
     #ll
   }
-  if (is.null(cov)==F) { ft1=summary(rm(Eu1~cov)); ft2=summary(rm(Eu1~cov))}
   # estimate - likelihood
   r1=stats::cov2cor(var1)
   r2=stats::cov2cor(var2)
   r1;r2
 
-  return(list(var1=var1, mu1=mu1,var2=var2, mu2=mu2, 
-              cor.score1=r1, cor.score2=r2, ll=ll[numiters], 
+  if (is.null(cov)==F) {
+    ft1=summary(lm(Eu1~cov));
+    ft2=summary(lm(Eu1~cov))
+  } else{
+    ft1=ft2=NULL
+  }
+
+
+  return(list(var1=var1, mu1=mu1,var2=var2, mu2=mu2,
+              cor.score1=r1, cor.score2=r2, ll=ll[numiters],
               coef1=m_output$coef1, coef2=m_output$coef2, ft1=ft1, ft2=ft2))
 }

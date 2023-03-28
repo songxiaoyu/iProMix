@@ -27,7 +27,7 @@ library(iProMix)
 
 
 ### Example 1: Correlation between one gene X and one gene Y in a cell type. 
-Note: The estimate and inference might be inaccurate if the sample size is small or the input cell type composition estimation is imprecise. 
+Notably, the estimate and inference might be inaccurate if the sample size is small or the input cell-type composition estimation is imprecise. If multiple gene pairs are under consideration, iProMix can leverage the parallel nature of these genes to calculate the robust eFDR. 
 ```R
 set.seed(123)
 n=500
@@ -47,7 +47,7 @@ t1$LRT.pvalue
 ````
 
 ### Example 2: Identify if any of the P genes in Y is associated with one gene X in a cell type. 
-Note: iProMix uses the parallel nature of P genes to infer eFDR, so P needs to be large for accurate inference. Under the uncertainty of input cell-type composition, `iProMix.eFDR.PermReplace` is more robust than the `iProMix.eFDR.PermAdd` strategy. 
+In this example, iProMix uses the parallel nature of P genes to infer eFDR, so P needs to be large. Both `iProMix.eFDR.PermReplace` and `iProMix.eFDR.PermAdd` provide valid results under correctly specified models, but when the input cell-type composition is inaccurately estimated, `iProMix.eFDR.PermReplace` is more robust than the `iProMix.eFDR.PermAdd` strategy. 
 
 ```R
 library(iProMix)
